@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "309046502987",
+    "project_id": "fa2arangali",
+    "storage_bucket": "fa2arangali.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309046502987:android:8a86f332d93413bc360fce",
+        "android_client_info": {
+          "package_name": "com.example.fl2_arangali"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVS1hANFSg6zRfp__6sA-xRKii9NHNF-4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
