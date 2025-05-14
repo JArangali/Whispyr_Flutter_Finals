@@ -1,16 +1,20 @@
-// ignore_for_file: override_on_non_overriding_member
-
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 
 import 'login.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Firebase.initializeApp();
+
+  // Hide the system UI (status bar and navigation bar)
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
   runApp(const mainPage());
 }
+
 
 class mainPage extends StatelessWidget {
   const mainPage({super.key});
@@ -268,7 +272,7 @@ class _insertFormState extends State<insertForm> {
                             var penname = PennameController.text;
                             var password = PasswordController.text;
 
-                            FirebaseFirestore.instance.collection("jatbl_Users").add(
+                            FirebaseFirestore.instance.collection("whispyr_users").add(
                                 {
                                   "firstname" : firstname,
                                   "lastname" : lastname,

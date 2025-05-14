@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "309046502987",
-    "project_id": "fa2arangali",
-    "storage_bucket": "fa2arangali.firebasestorage.app"
+    "project_number": "1043149682999",
+    "firebase_url": "https://finalsflutterproject-default-rtdb.firebaseio.com",
+    "project_id": "finalsflutterproject",
+    "storage_bucket": "finalsflutterproject.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:309046502987:android:8a86f332d93413bc360fce",
+        "mobilesdk_app_id": "1:1043149682999:android:235628329439ea70c482b2",
         "android_client_info": {
           "package_name": "com.example.fl2_arangali"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBVS1hANFSg6zRfp__6sA-xRKii9NHNF-4"
+          "current_key": "AIzaSyBpFa8EQB2rGRcwWTpVryAWXNG9lmI2w9M"
         }
       ],
       "services": {
