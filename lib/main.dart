@@ -1,3 +1,4 @@
+import 'package:fl2_arangali/AllEntriesPage.dart';
 import 'package:fl2_arangali/calendar.dart';
 import 'package:fl2_arangali/create_whyspr.dart';
 import 'package:fl2_arangali/sampler.dart';
@@ -96,7 +97,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _pages = [
     Sample(title: "Home"), // Home page
     CalendarPage(), // Calendar page
-    Sample(title: "View",), // View page
+    AllEntriesPage(), // View page
   ];
 
   void _onItemTapped(int index) {
