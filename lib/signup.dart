@@ -5,27 +5,27 @@ import 'package:flutter/services.dart';
 
 import 'login.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  Firebase.initializeApp();
-
-  // Hide the system UI (status bar and navigation bar)
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-
-  runApp(const mainPage());
-}
-
-
-class mainPage extends StatelessWidget {
-  const mainPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        home: insertForm()
-    );
-  }
-}
+// void main() {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   Firebase.initializeApp();
+//
+//   // Hide the system UI (status bar and navigation bar)
+//   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+//
+//   runApp(const mainPage());
+// }
+//
+//
+// class mainPage extends StatelessWidget {
+//   const mainPage({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//         home: insertForm()
+//     );
+//   }
+// }
 
 class insertForm extends StatefulWidget {
   const insertForm({super.key});
@@ -265,22 +265,65 @@ class _insertFormState extends State<insertForm> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             var firstname = FirstnameController.text;
                             var lastname = LastnameController.text;
                             var email = EmailController.text;
                             var penname = PennameController.text;
                             var password = PasswordController.text;
 
-                            FirebaseFirestore.instance.collection("whispyr_users").add(
-                                {
-                                  "firstname" : firstname,
-                                  "lastname" : lastname,
-                                  "email" : email,
-                                  "penname" : penname,
-                                  "password" : password,
+                            try {
+                              QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+                                  .collection('whispyr_users')
+                                  .where('penname', isEqualTo: penname)
+                                  .limit(1) // optional: if you expect only one match
+                                  .get();
+
+                              if (querySnapshot.docs.isNotEmpty) {
+                                var userData = querySnapshot.docs.first.data() as Map<String, dynamic>;
+                                print('User found: ${userData['firstname']} ${userData['lastname']}');
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Penname already exists, sorry.')),
+                                );
+                              } else {
+
+                                //no user found so it means this can be registered.
+                                FirebaseFirestore.instance.collection("whispyr_users").add(
+                                    {
+                                      "firstname" : firstname,
+                                      "lastname" : lastname,
+                                      "email" : email,
+                                      "penname" : penname,
+                                      "password" : password,
+                                    }
+                                );
+
+                                if (context.mounted) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text('Welcome!'),
+                                      content: Text('You have registered successfully!'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop(); // Close the dialog
+
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(builder: (context) => Login()), // Use the LoginPage widget directly
+                                            );
+                                          },
+                                          child: Text('OK'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
                                 }
-                            );
+                              }
+                            } catch (e) {
+                              print('Error fetching user: $e');
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Color(0xffF8F4E1),//change background color of button
@@ -318,7 +361,7 @@ class _insertFormState extends State<insertForm> {
                         ElevatedButton(
                           onPressed: () {
                             Navigator.push(context, MaterialPageRoute(
-                                builder: (context) => dis(
+                                builder: (context) => Login(
                                 )));
                           },
                           style: ElevatedButton.styleFrom(
