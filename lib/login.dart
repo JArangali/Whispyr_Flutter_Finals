@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fl2_arangali/create_whyspr.dart';
+import 'package:fl2_arangali/main.dart';
 import 'package:fl2_arangali/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
 }
 
-class dis extends StatelessWidget {
+class Login extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController penNameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -15,8 +18,7 @@ class dis extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
-    return MaterialApp(
-        home: Scaffold(
+    return Scaffold(
           body: Center(
               child:
               Form(
@@ -153,6 +155,11 @@ class dis extends StatelessWidget {
                                     if (query.docs.isNotEmpty) {
                                       print('✅ Signed in successfully.');
 
+                                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                                      prefs.setBool('isLoggedIn', true);
+                                      prefs.setString('penName', penName);
+                                      print("Saved to preferences:  $penName");
+
                                       if (context.mounted) {
                                         showDialog(
                                           context: context,
@@ -162,7 +169,14 @@ class dis extends StatelessWidget {
                                             actions: [
                                               TextButton(
                                                 onPressed: () {
+
+
                                                   Navigator.of(context).pop(); // Close the dialog
+
+                                                  Navigator.pushReplacement(
+                                                    context,
+                                                    MaterialPageRoute(builder: (context) => MainScreen()), // Use the LoginPage widget directly
+                                                  );
                                                 },
                                                 child: Text('OK'),
                                               ),
@@ -221,7 +235,7 @@ class dis extends StatelessWidget {
                               ElevatedButton(
                                 onPressed: () {
                                   Navigator.push(context, MaterialPageRoute(
-                                      builder: (context) => mainPage(
+                                      builder: (context) => insertForm(
                                       )));
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -248,7 +262,7 @@ class dis extends StatelessWidget {
                 ),
               ),
           ),
-        )
+
     );
   }
 }
