@@ -31,6 +31,21 @@ class _EditEntryPageState extends State<EditEntryPage> {
       initialDate: _selectedDate ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
+      builder: (context, child) => Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: ColorScheme.light(
+            primary: const Color(0xFF614124), // deep brown for header
+            onPrimary: Colors.white,          // text color on header
+            onSurface: const Color(0xFF614124), // brown for dates
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              foregroundColor: const Color(0xFF614124), // brown for buttons
+            ),
+          ),
+        ),
+        child: child!,
+      ),
     );
     if (picked != null) {
       setState(() {
@@ -42,7 +57,10 @@ class _EditEntryPageState extends State<EditEntryPage> {
   Future<void> _saveChanges() async {
     if (_titleController.text.isEmpty || _storyController.text.isEmpty || _selectedDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please complete all fields')),
+        const SnackBar(
+          content: Text('Please complete all fields'),
+          backgroundColor: Color(0xFF614124), // brown snackbar
+        ),
       );
       return;
     }
@@ -64,9 +82,15 @@ class _EditEntryPageState extends State<EditEntryPage> {
     String displayDate = DateFormat('EEEE, dd MMMM yyyy').format(_selectedDate!);
 
     return Scaffold(
+      backgroundColor: const Color(0xFFFDF6EC), // soft cream background
       appBar: AppBar(
-        title: Text('Edit Entry'),
-        backgroundColor: Colors.brown,
+        title: const Text(
+          'Edit Entry',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: const Color(0xFF614124), // deep brown
+        centerTitle: true,
+        elevation: 1,
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -74,40 +98,101 @@ class _EditEntryPageState extends State<EditEntryPage> {
           children: [
             Row(
               children: [
-                Text(displayDate, style: TextStyle(fontSize: 16, color: Colors.orange)),
+                Text(
+                  displayDate,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFF9FC088), // a calm green
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 IconButton(
-                  icon: Icon(Icons.calendar_today, color: Colors.orangeAccent),
+                  icon: const Icon(Icons.calendar_today),
+                  color: const Color(0xFF9FC088),
                   onPressed: _pickDate,
+                  tooltip: 'Pick Date',
                 ),
               ],
             ),
-            SizedBox(height: 20),
-            Text('Title', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
+            const Text(
+              'Title',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF614124),
+              ),
+            ),
+            const SizedBox(height: 6),
             TextField(
               controller: _titleController,
               maxLength: 50,
               maxLines: 2,
-              decoration: InputDecoration(hintText: 'Edit the title'),
+              style: const TextStyle(color: Color(0xFF614124)),
+              decoration: InputDecoration(
+                hintText: 'Edit the title',
+                hintStyle: TextStyle(color: Colors.brown.shade300),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
             ),
-            SizedBox(height: 20),
-            Text('Story', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
+            const Text(
+              'Story',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF614124),
+              ),
+            ),
+            const SizedBox(height: 6),
             TextField(
               controller: _storyController,
               maxLength: 500,
               maxLines: 10,
-              decoration: InputDecoration(hintText: 'Edit your story'),
+              style: const TextStyle(color: Color(0xFF614124)),
+              decoration: InputDecoration(
+                hintText: 'Edit your story',
+                hintStyle: TextStyle(color: Colors.brown.shade300),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              ),
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             Center(
               child: ElevatedButton(
                 onPressed: _saveChanges,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.brown,
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                  backgroundColor: const Color(0xFF614124),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 48, vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 4,
                 ),
-                child: Text('Save Changes', style: TextStyle(fontSize: 20, color: Colors.white)),
+                child: const Text(
+                  'Save Changes',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
-            )
+            ),
           ],
         ),
       ),
