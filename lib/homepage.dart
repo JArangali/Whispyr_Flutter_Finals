@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(WhispyrApp());
@@ -25,13 +28,23 @@ class _HomePageState extends State<HomePage> {
   final Color yellow = Color(0xFFE8C07D);
   final Color orange = Color(0xFFCC704B);
   final Color brown = Color(0xFF614124);
+  String penName = '';
 
-  final List<Map<String, String>> entries = [
-    {'icon': '📓', 'type': 'Title', 'date': '07 November 2021'},
-    {'icon': '📓', 'type': 'Title', 'date': '07 November 2021'},
-    {'icon': '📓', 'type': 'Title', 'date': '06 November 2021'},
-    {'icon': '📓', 'type': 'Title', 'date': '05 November 2021'},
-  ];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final DateFormat _dateFormat = DateFormat('dd MMMM yyyy');
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPenName();
+  }
+
+  Future<void> _loadPenName() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      penName = prefs.getString('penName') ?? '';
+    });
+  }
 
   String getGreeting() {
     final hour = DateTime.now().hour;
@@ -63,7 +76,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               SizedBox(height: 6),
-              Text('Angela Marie!',
+              Text('$penName!',
                   style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -119,7 +132,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
 
-
               SizedBox(height: 20),
 
               // Quick Tips Title
@@ -130,7 +142,7 @@ class _HomePageState extends State<HomePage> {
                       color: brown)),
               SizedBox(height: 8),
 
-// Quick Tips Cards
+              // Quick Tips Cards
               Row(
                 children: [
                   Expanded(
@@ -158,7 +170,7 @@ class _HomePageState extends State<HomePage> {
                                   color: Colors.white,
                                   fontSize: 14)),
                           SizedBox(height: 4),
-                          Text("Don’t overthink—just express your thoughts.",
+                          Text("Don't overthink—just express your thoughts.",
                               style: TextStyle(
                                   color: Colors.white.withOpacity(0.9),
                                   fontSize: 12)),
@@ -205,10 +217,7 @@ class _HomePageState extends State<HomePage> {
 
               SizedBox(height: 20),
 
-              // Month Selector
-              // Inside _HomePageState build method, replacing the month selector block:
-
-// Quote of the Day Section
+              // Quote of the Day Section
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(18),
@@ -245,59 +254,99 @@ class _HomePageState extends State<HomePage> {
               SizedBox(height: 20),
 
               // Journal Entries Title
-              Text('Recent Entries',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      color: brown)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Recent Entries',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: brown)),
+                  TextButton(
+                    onPressed: () {
+                      // Navigator.pushNamed(context, '/allEntries');
+                    },
+                    child: Text('See All',
+                        style: TextStyle(
+                            color: orange,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
               SizedBox(height: 10),
 
-              // Journal Entries
+              // Journal Entries from Firestore
               Expanded(
-                child: ListView.builder(
-                  itemCount: entries.length,
-                  itemBuilder: (context, index) {
-                    var entry = entries[index];
-                    return Container(
-                      margin: EdgeInsets.only(bottom: 12),
-                      padding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: brown.withOpacity(0.05),
-                            blurRadius: 6,
-                            offset: Offset(0, 2),
-                          )
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Text(entry['icon'] ?? '',
-                              style: TextStyle(fontSize: 26)),
-                          SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(entry['type'] ?? '',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: brown)),
-                              SizedBox(height: 4),
-                              Text(entry['date'] ?? '',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600])),
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: _firestore
+                      .collection('whispyr_journal_entries')
+                      .where('user', isEqualTo: penName)
+                      .orderBy('date', descending: true)
+                      .limit(10)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    }
+
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return Center(
+                        child: Text('No entries yet',
+                            style: TextStyle(color: brown)),
+                      );
+                    }
+
+                    return ListView.builder(
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        var entry = snapshot.data!.docs[index];
+                        var entryData = entry.data() as Map<String, dynamic>;
+                        var date = (entryData['date'] as Timestamp).toDate();
+
+                        return Container(
+                          margin: EdgeInsets.only(bottom: 12),
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: brown.withOpacity(0.05),
+                                blurRadius: 6,
+                                offset: Offset(0, 2),
+                              )
                             ],
                           ),
-                          Spacer(),
-                          Icon(Icons.arrow_forward_ios,
-                              size: 16, color: Colors.grey[400]),
-                        ],
-                      ),
+                          child: Row(
+                            children: [
+                              Text('📓', style: TextStyle(fontSize: 26)),
+                              SizedBox(width: 12),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(entryData['title'] ?? 'Untitled',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: brown)),
+                                  SizedBox(height: 4),
+                                  Text(_dateFormat.format(date),
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.brown)),
+                                ],
+                              ),
+                              Spacer(),
+                              Icon(Icons.arrow_forward_ios,
+                                  size: 16, color: Colors.grey[400]),
+                            ],
+                          ),
+                        );
+                      },
                     );
                   },
                 ),

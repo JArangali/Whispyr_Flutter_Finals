@@ -168,7 +168,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       return Container(
                         margin: const EdgeInsets.symmetric(vertical: 8.0),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFCC704B),
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(16.0),
                           boxShadow: [
                             BoxShadow(
@@ -182,12 +182,12 @@ class _CalendarPageState extends State<CalendarPage> {
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
                           title: Text(
                             DateFormat('MMM dd, yyyy | HH:mm').format(timestamp.toDate()),
-                            style: const TextStyle(fontSize: 12, color: Colors.white70),
+                            style: const TextStyle(fontSize: 12, color: Colors.brown),
                           ),
                           subtitle: Text(
                             entry['title'],
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: Colors.brown,
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
                             ),
