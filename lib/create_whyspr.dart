@@ -112,7 +112,7 @@ class _CreateWhysperState extends State<CreateWhysper> {
       appBar: AppBar(
         title: Text('Create Entry', style: TextStyle(fontSize: 24, color: Colors.white)),
         centerTitle: true,
-        backgroundColor: Color(0xFF614124),
+        backgroundColor: const Color(0xFFF6F1E7),
         elevation: 3,
       ),
         body: SafeArea(
