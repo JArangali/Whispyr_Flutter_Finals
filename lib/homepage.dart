@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:fl2_arangali/AllEntriesPage.dart';
 import 'package:fl2_arangali/view_entry.dart';
 
-
 void main() {
   runApp(WhispyrApp());
 }
@@ -65,7 +64,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Color(0xffF8F4E1),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -277,94 +276,93 @@ class _HomePageState extends State<HomePage> {
                             color: orange,
                             fontWeight: FontWeight.bold)),
                   ),
-
                 ],
               ),
               SizedBox(height: 10),
 
               // Journal Entries from Firestore
-              Expanded(
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: _firestore
-                      .collection('whispyr_journal_entries')
-                      .where('user', isEqualTo: penName)
-                      .orderBy('date', descending: true)
-                      .limit(10)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    }
+              StreamBuilder<QuerySnapshot>(
+                stream: _firestore
+                    .collection('whispyr_journal_entries')
+                    .where('user', isEqualTo: penName)
+                    .orderBy('date', descending: true)
+                    .limit(10)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
 
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
 
-                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return Center(
-                        child: Text('No entries yet',
-                            style: TextStyle(color: brown)),
-                      );
-                    }
-
-                    return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        var entry = snapshot.data!.docs[index];
-                        var entryData = entry.data() as Map<String, dynamic>;
-                        var date = (entryData['date'] as Timestamp).toDate();
-
-                        return GestureDetector(
-                          onTap: () async {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ViewEntryPage(entry: entry),
-                              ),
-                            );
-                            setState(() {}); // Refresh list after viewing
-                          },
-                          child: Container(
-                            margin: EdgeInsets.only(bottom: 12),
-                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: brown.withOpacity(0.05),
-                                  blurRadius: 6,
-                                  offset: Offset(0, 2),
-                                )
-                              ],
-                            ),
-                            child: Row(
-                              children: [
-                                Text('📓', style: TextStyle(fontSize: 26)),
-                                SizedBox(width: 12),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(entryData['title'] ?? 'Untitled',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                            color: brown)),
-                                    SizedBox(height: 4),
-                                    Text(_dateFormat.format(date),
-                                        style: TextStyle(fontSize: 12, color: Colors.brown)),
-                                  ],
-                                ),
-                                Spacer(),
-                                Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Center(
+                      child: Text('No entries yet',
+                          style: TextStyle(color: brown)),
                     );
-                  },
-                ),
+                  }
+
+                  return ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      var entry = snapshot.data!.docs[index];
+                      var entryData = entry.data() as Map<String, dynamic>;
+                      var date = (entryData['date'] as Timestamp).toDate();
+
+                      return GestureDetector(
+                        onTap: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ViewEntryPage(entry: entry),
+                            ),
+                          );
+                          setState(() {});
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 12),
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: brown.withOpacity(0.05),
+                                blurRadius: 6,
+                                offset: Offset(0, 2),
+                              )
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              Text('📓', style: TextStyle(fontSize: 26)),
+                              SizedBox(width: 12),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(entryData['title'] ?? 'Untitled',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: brown)),
+                                  SizedBox(height: 4),
+                                  Text(_dateFormat.format(date),
+                                      style: TextStyle(fontSize: 12, color: Colors.brown)),
+                                ],
+                              ),
+                              Spacer(),
+                              Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),
