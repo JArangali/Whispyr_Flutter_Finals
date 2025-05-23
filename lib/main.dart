@@ -189,7 +189,7 @@ class _MainScreenState extends State<MainScreen> {
               label: '',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person),
+              icon: Icon(Icons.notes),
               label: '', // Empty label
             ),
             BottomNavigationBarItem(
