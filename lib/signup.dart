@@ -36,6 +36,9 @@ class insertForm extends StatefulWidget {
 
 class _insertFormState extends State<insertForm> {
   @override
+  final _formKey = GlobalKey<FormState>();
+
+
   var FirstnameController = TextEditingController();
   var LastnameController = TextEditingController();
   var EmailController = TextEditingController();
@@ -60,6 +63,7 @@ class _insertFormState extends State<insertForm> {
               ),
             ),
             child: Form(
+                key: _formKey,
                 child: ListView(
                   children: [
 
@@ -85,6 +89,12 @@ class _insertFormState extends State<insertForm> {
                       child:
                       TextFormField(
                         controller: FirstnameController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'First name is required';
+                          }
+                          return null;
+                        },
                         decoration: InputDecoration(
                           labelText: "Firstname",
                           labelStyle: TextStyle(
@@ -122,6 +132,12 @@ class _insertFormState extends State<insertForm> {
                       child:
                       TextFormField(
                         controller: LastnameController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Last name is required';
+                          }
+                          return null;
+                        },
                         decoration: InputDecoration(
                           labelText: "Lastname",
                           labelStyle: TextStyle(
@@ -159,26 +175,24 @@ class _insertFormState extends State<insertForm> {
                       child:
                       TextFormField(
                         controller: EmailController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Email is required';
+                          } else if (!value.contains('@')) {
+                            return 'Enter a valid email';
+                          }
+                          return null;
+                        },
                         decoration: InputDecoration(
                           labelText: "Email",
-                          labelStyle: TextStyle(
-                              color: Color(0xa6614124)
-                          ),
-
+                          labelStyle: TextStyle(color: Color(0xa6614124)),
                           enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                              borderSide: BorderSide(
-                                color: Color(0x1a000000),
-                                width: 1,
-                              )
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(color: Color(0x1a000000), width: 1),
                           ),
-
                           focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                              borderSide: BorderSide(
-                                color: Color(0x1a000000),
-                                width: 1,
-                              )
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(color: Color(0x1a000000), width: 1),
                           ),
                           prefixIcon: Icon(Icons.email_outlined),
                           prefixIconColor: Color(0xbf614124),
@@ -196,6 +210,12 @@ class _insertFormState extends State<insertForm> {
                       child:
                       TextFormField(
                         controller: PennameController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Pen name is required';
+                          }
+                          return null;
+                        },
                         decoration: InputDecoration(
                           labelText: "Pen Name",
                           labelStyle: TextStyle(
@@ -233,6 +253,15 @@ class _insertFormState extends State<insertForm> {
                       child:
                       TextFormField(
                         controller: PasswordController,
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Password is required';
+                          } else if (value.length < 6) {
+                            return 'Password must be at least 6 characters long';
+                          }
+                          return null;
+                        },
                         decoration: InputDecoration(
                           labelText: "Password",
                           labelStyle: TextStyle(
@@ -266,68 +295,65 @@ class _insertFormState extends State<insertForm> {
                       children: [
                         ElevatedButton(
                           onPressed: () async {
-                            var firstname = FirstnameController.text;
-                            var lastname = LastnameController.text;
-                            var email = EmailController.text;
-                            var penname = PennameController.text;
-                            var password = PasswordController.text;
+                            if (_formKey.currentState!.validate()) {
+                              var firstname = FirstnameController.text;
+                              var lastname = LastnameController.text;
+                              var email = EmailController.text;
+                              var penname = PennameController.text;
+                              var password = PasswordController.text;
 
-                            try {
-                              QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-                                  .collection('whispyr_users')
-                                  .where('penname', isEqualTo: penname)
-                                  .limit(1) // optional: if you expect only one match
-                                  .get();
+                              try {
+                                QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+                                    .collection('whispyr_users')
+                                    .where('penname', isEqualTo: penname)
+                                    .limit(1)
+                                    .get();
 
-                              if (querySnapshot.docs.isNotEmpty) {
-                                var userData = querySnapshot.docs.first.data() as Map<String, dynamic>;
-                                print('User found: ${userData['firstname']} ${userData['lastname']}');
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Penname already exists, sorry.')),
-                                );
-                              } else {
-
-                                //no user found so it means this can be registered.
-                                FirebaseFirestore.instance.collection("whispyr_users").add(
-                                    {
-                                      "firstname" : firstname,
-                                      "lastname" : lastname,
-                                      "email" : email,
-                                      "penname" : penname,
-                                      "password" : password,
-                                    }
-                                );
-
-                                if (context.mounted) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: Text('Welcome!'),
-                                      content: Text('You have registered successfully!'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop(); // Close the dialog
-
-                                            Navigator.pushReplacement(
-                                              context,
-                                              MaterialPageRoute(builder: (context) => Login()), // Use the LoginPage widget directly
-                                            );
-                                          },
-                                          child: Text('OK'),
-                                        ),
-                                      ],
-                                    ),
+                                if (querySnapshot.docs.isNotEmpty) {
+                                  var userData = querySnapshot.docs.first.data() as Map<String, dynamic>;
+                                  print('User found: ${userData['firstname']} ${userData['lastname']}');
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Penname already exists, sorry.')),
                                   );
+                                } else {
+                                  await FirebaseFirestore.instance.collection("whispyr_users").add({
+                                    "firstname": firstname,
+                                    "lastname": lastname,
+                                    "email": email,
+                                    "penname": penname,
+                                    "password": password,
+                                  });
+
+                                  if (context.mounted) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text('Welcome!'),
+                                        content: Text('You have registered successfully!'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                              Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => Login()),
+                                              );
+                                            },
+                                            child: Text('OK'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
                                 }
+                              } catch (e) {
+                                print('Error fetching user: $e');
                               }
-                            } catch (e) {
-                              print('Error fetching user: $e');
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            foregroundColor: Color(0xffF8F4E1),//change background color of button
-                            backgroundColor: Color(0xff6D8D57),//change text color of button
+                            foregroundColor: Color(0xffF8F4E1),
+                            backgroundColor: Color(0xff6D8D57),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(25),
                             ),
