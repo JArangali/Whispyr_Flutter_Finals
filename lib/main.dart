@@ -135,16 +135,36 @@ class _MainScreenState extends State<MainScreen> {
             print("selected: $index, modified: $newIndex");
 
             if (index == 4) {
-              print("Sign out");
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("Sign Out"),
+                    content: Text("Are you sure you want to sign out?"),
+                    actions: [
+                      TextButton(
+                        child: Text("No"),
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                      ),
+                      TextButton(
+                        child: Text("Yes"),
+                        onPressed: () async {
+                          Navigator.of(context).pop(); // Close the dialog first
 
-              final prefs = await SharedPreferences.getInstance();
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.clear();
 
-              await prefs.clear();
-
-
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => Login()),
-                    (Route<dynamic> route) => false,
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (context) => Login()),
+                                (Route<dynamic> route) => false,
+                          );
+                        },
+                      ),
+                    ],
+                  );
+                },
               );
               return;
             }
