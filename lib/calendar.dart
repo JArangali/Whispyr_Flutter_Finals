@@ -48,7 +48,7 @@ class _CalendarPageState extends State<CalendarPage> {
           style: TextStyle(fontSize: 28, color: Colors.white),
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xFFF6F1E7),// her deep brown
+        backgroundColor:  Colors.brown,// her deep brown
         elevation: 1,
       ),
       body: _loadingPenname
