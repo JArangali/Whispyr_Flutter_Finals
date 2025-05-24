@@ -2,11 +2,8 @@ import 'package:fl2_arangali/AllEntriesPage.dart';
 import 'package:fl2_arangali/calendar.dart';
 import 'package:fl2_arangali/create_whyspr.dart';
 import 'package:fl2_arangali/homepage.dart';
-import 'package:fl2_arangali/sampler.dart';
-import 'package:fl2_arangali/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -89,7 +86,7 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     // If widget.index is provided, use it, otherwise default to 0
-    _selectedIndex = widget.index ?? 1;
+    _selectedIndex = widget.index ?? 0;
   }
 
   //place pages here
