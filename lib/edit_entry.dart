@@ -34,13 +34,13 @@ class _EditEntryPageState extends State<EditEntryPage> {
       builder: (context, child) => Theme(
         data: Theme.of(context).copyWith(
           colorScheme: ColorScheme.light(
-            primary: const Color(0xFF614124), // deep brown for header
-            onPrimary: Colors.white,          // text color on header
-            onSurface: const Color(0xFF614124), // brown for dates
+            primary: const Color(0xFF614124),
+            onPrimary: Colors.white,
+            onSurface: const Color(0xFF614124),
           ),
           textButtonTheme: TextButtonThemeData(
             style: TextButton.styleFrom(
-              foregroundColor: const Color(0xFF614124), // brown for buttons
+              foregroundColor: const Color(0xFF614124),
             ),
           ),
         ),
@@ -59,7 +59,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please complete all fields'),
-          backgroundColor: Color(0xFF614124), // brown snackbar
+          backgroundColor: Color(0xFF614124),
         ),
       );
       return;
@@ -82,13 +82,13 @@ class _EditEntryPageState extends State<EditEntryPage> {
     String displayDate = DateFormat('EEEE, dd MMMM yyyy').format(_selectedDate!);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFDF6EC), // soft cream background
+      backgroundColor: const Color(0xFFFDF6EC),
       appBar: AppBar(
         title: const Text(
           'Edit Entry',
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
-        backgroundColor: const Color(0xFF614124), // deep brown
+        backgroundColor: const Color(0xFF614124),
         centerTitle: true,
         elevation: 1,
       ),
@@ -102,7 +102,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                   displayDate,
                   style: const TextStyle(
                     fontSize: 16,
-                    color: Color(0xFF9FC088), // a calm green
+                    color: Color(0xFF9FC088),
                     fontWeight: FontWeight.w600,
                   ),
                 ),

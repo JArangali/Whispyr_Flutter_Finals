@@ -56,7 +56,7 @@ class _ViewEntryPageState extends State<ViewEntryPage> {
           .doc(_entry.id)
           .delete();
 
-      Navigator.pop(context); // Go back after delete
+      Navigator.pop(context);
     }
   }
 
@@ -67,7 +67,7 @@ class _ViewEntryPageState extends State<ViewEntryPage> {
     final date = (_entry['date'] as Timestamp).toDate();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F1E7), // warm beige background
+      backgroundColor: const Color(0xFFF6F1E7),
       appBar: AppBar(
         title: const Text(
           "Your Entry",
@@ -87,7 +87,7 @@ class _ViewEntryPageState extends State<ViewEntryPage> {
               );
 
               if (result == true) {
-                await _refreshEntry(); // Refresh the entry if updated
+                await _refreshEntry();
               }
             },
           ),
@@ -129,7 +129,6 @@ class _ViewEntryPageState extends State<ViewEntryPage> {
               ),
               const SizedBox(height: 12),
               Text(
-                // Format date to a nicer string
                 '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}',
                 style: TextStyle(
                   fontSize: 14,

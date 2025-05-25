@@ -40,7 +40,7 @@ class _AllEntriesPageState extends State<AllEntriesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F1E7), // Warm beige background consistent with her design
+      backgroundColor: const Color(0xFFF6F1E7),
       appBar: AppBar(
         automaticallyImplyLeading: true,
         title: const Text(
